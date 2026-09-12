@@ -4,7 +4,6 @@
   const qs=s=>document.querySelector(s), qsa=s=>[...document.querySelectorAll(s)];
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  // Network resilience: cache Open Library responses briefly and never let a stalled request freeze the UI.
   const nativeFetch=window.fetch.bind(window);
   const mem=new Map();
   window.fetch=async(input,init={})=>{
@@ -49,9 +48,9 @@
       reset.title='Effacer les livres du profil sans supprimer ta bibliothèque';
       reset.onclick=()=>{
         if(!confirm('Recommencer le profil ? Tes favoris et tes notes seront conservés.')) return;
-        if(window.S){S.selected=[];S.hidden=[];S.mood='';S.results=[];S.current=[];localStorage.setItem(APP,JSON.stringify(S));}
+        if(typeof S!=='undefined'){S.selected=[];S.hidden=[];S.mood='';S.results=[];S.current=[];localStorage.setItem(APP,JSON.stringify(S));}
         const mood=qs('#mood');if(mood)mood.value='';const pb=qs('#profileBox');if(pb)pb.style.display='none';
-        if(window.renderBooks)renderBooks(window.seeds||[]);window.scrollTo({top:0,behavior:'smooth'});
+        if(typeof renderBooks==='function'&&typeof seeds!=='undefined')renderBooks(seeds);window.scrollTo({top:0,behavior:'smooth'});
       };
       actions.appendChild(reset);
     }
@@ -70,14 +69,13 @@
     }
   }
 
-  // Ratings become useful learning signals immediately: after a rating, refresh the list so the next ranking reflects it.
   function wireLearning(){
     if(typeof window.rate==='function' && !window.rate.__bfWrapped){
       const original=window.rate;
       const wrapped=function(title,n){
         original(title,n);
-        try{ if(window.S && n<=2 && !S.hidden.includes(title)) S.hidden.push(title); localStorage.setItem(APP,JSON.stringify(S)); }catch{}
-        if(typeof window.recommend==='function' && S?.selected?.length>=3) setTimeout(()=>window.recommend(),80);
+        try{ if(typeof S!=='undefined' && n<=2 && !S.hidden.includes(title)) S.hidden.push(title); if(typeof S!=='undefined')localStorage.setItem(APP,JSON.stringify(S)); }catch{}
+        if(typeof window.recommend==='function' && typeof S!=='undefined' && S.selected?.length>=3) setTimeout(()=>window.recommend(),80);
       };
       wrapped.__bfWrapped=true;window.rate=wrapped;
     }
@@ -98,7 +96,7 @@
   document.addEventListener('keydown',e=>{
     if(e.key!=='Enter'||e.shiftKey) return;
     const a=document.activeElement;
-    if(a?.id==='mood' && window.recommend){e.preventDefault();recommend();}
+    if(a?.id==='mood' && typeof window.recommend==='function'){e.preventDefault();recommend();}
   });
 
   document.addEventListener('error',e=>{

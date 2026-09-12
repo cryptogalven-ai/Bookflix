@@ -1,13 +1,13 @@
-const CACHE='bookflix-shell-v9';
-const SHELL=['/','/index.html','/manifest.json','/icon.svg','/enhancements.js','/learning.js','/product.js','/intelligence.js','/growth.js'];
+const CACHE='bookflix-shell-v10';
+const SHELL=['/','/index.html','/manifest.json','/icon.svg','/enhancements.js','/learning.js','/product.js','/intelligence.js','/growth.js','/quality.js'];
 const isOpenLibrary=u=>u.hostname==='openlibrary.org'||u.hostname==='covers.openlibrary.org';
 const isPage=r=>r&&r.ok&&r.headers.get('content-type')?.includes('text/html');
 async function enhancedResponse(response){
   if(!isPage(response))return response;
   try{
     const text=await response.text();
-    const hasEnh=text.includes('/enhancements.js'),hasLearning=text.includes('/learning.js'),hasProduct=text.includes('/product.js'),hasIntel=text.includes('/intelligence.js'),hasGrowth=text.includes('/growth.js');
-    const scripts=`${hasEnh?'':'<script src="/enhancements.js"></script>'}${hasLearning?'':'<script src="/learning.js"></script>'}${hasProduct?'':'<script src="/product.js"></script>'}${hasIntel?'':'<script src="/intelligence.js"></script>'}${hasGrowth?'':'<script src="/growth.js"></script>'}`;
+    const hasEnh=text.includes('/enhancements.js'),hasLearning=text.includes('/learning.js'),hasProduct=text.includes('/product.js'),hasIntel=text.includes('/intelligence.js'),hasGrowth=text.includes('/growth.js'),hasQuality=text.includes('/quality.js');
+    const scripts=`${hasEnh?'':'<script src="/enhancements.js"></script>'}${hasLearning?'':'<script src="/learning.js"></script>'}${hasProduct?'':'<script src="/product.js"></script>'}${hasIntel?'':'<script src="/intelligence.js"></script>'}${hasGrowth?'':'<script src="/growth.js"></script>'}${hasQuality?'':'<script src="/quality.js"></script>'}`;
     if(!scripts)return new Response(text,{status:response.status,statusText:response.statusText,headers:response.headers});
     const injected=text.replace('</body>',`${scripts}</body>`);
     const headers=new Headers(response.headers);headers.delete('content-length');

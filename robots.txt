@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://bookflix-git-main-memestack.vercel.app/sitemap.xml

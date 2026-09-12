@@ -59,8 +59,7 @@
     if(search && !qs('#bf-search-hint')){
       search.setAttribute('aria-label','Rechercher un livre ou un auteur');
       search.setAttribute('enterkeyhint','search');
-      const hint=document.createElement('span');hint.id='bf-search-hint';hint.className='hint';hint.textContent='Entrée pour rechercher';
-      hint.innerHTML='Entrée pour rechercher <span class="bf-kbd">↵</span>';
+      const hint=document.createElement('span');hint.id='bf-search-hint';hint.className='hint';hint.innerHTML='Entrée pour rechercher <span class="bf-kbd">↵</span>';
       search.parentElement.appendChild(hint);
     }
     const nav=qs('nav');
@@ -68,6 +67,19 @@
       const state=document.createElement('span');state.id='bf-online';state.className='bf-online';state.innerHTML='<i class="bf-dot"></i><span>En ligne</span>';nav.appendChild(state);
       const refresh=()=>{state.classList.toggle('off',!navigator.onLine);state.querySelector('span').textContent=navigator.onLine?'En ligne':'Hors ligne';};
       addEventListener('online',refresh);addEventListener('offline',refresh);refresh();
+    }
+  }
+
+  // Ratings become useful learning signals immediately: after a rating, refresh the list so the next ranking reflects it.
+  function wireLearning(){
+    if(typeof window.rate==='function' && !window.rate.__bfWrapped){
+      const original=window.rate;
+      const wrapped=function(title,n){
+        original(title,n);
+        try{ if(window.S && n<=2 && !S.hidden.includes(title)) S.hidden.push(title); localStorage.setItem(APP,JSON.stringify(S)); }catch{}
+        if(typeof window.recommend==='function' && S?.selected?.length>=3) setTimeout(()=>window.recommend(),80);
+      };
+      wrapped.__bfWrapped=true;window.rate=wrapped;
     }
   }
 
@@ -83,19 +95,17 @@
   }
   addEventListener('appinstalled',()=>{deferredInstall=null;qs('#bf-install')?.remove();});
 
-  // Give Enter on the mood field the same behaviour as the main CTA.
   document.addEventListener('keydown',e=>{
     if(e.key!=='Enter'||e.shiftKey) return;
     const a=document.activeElement;
     if(a?.id==='mood' && window.recommend){e.preventDefault();recommend();}
   });
 
-  // Make cover images resilient: failed covers fall back to a clean title card.
   document.addEventListener('error',e=>{
     const el=e.target;if(!(el instanceof HTMLImageElement)) return;
     el.style.display='none';
   },true);
 
   addStyles();
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupTools,{once:true});else setupTools();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{setupTools();wireLearning();},{once:true});else {setupTools();wireLearning();}
 })();

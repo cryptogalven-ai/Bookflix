@@ -2,7 +2,7 @@
   'use strict';
   const KEY='bookflix_v4';
   const boot=()=>{
-    if(!window.S||typeof window.rate!=='function'||typeof window.recommend!=='function')return;
+    if(typeof S==='undefined'||typeof window.rate!=='function'||typeof window.recommend!=='function')return;
     if(window.rate.__bfLearning2)return;
     const originalRate=window.rate, originalRecommend=window.recommend;
     window.rate=function(title,n){

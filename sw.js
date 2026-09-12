@@ -1,4 +1,4 @@
-const CACHE='bookflix-shell-v11';
+const CACHE='bookflix-shell-v12';
 const SHELL=['/','/index.html','/manifest.json','/icon.svg','/enhancements.js','/learning.js','/product.js','/intelligence.js','/growth.js','/quality.js','/premium.js'];
 const isOpenLibrary=u=>u.hostname==='openlibrary.org'||u.hostname==='covers.openlibrary.org';
 const isPage=r=>r&&r.ok&&r.headers.get('content-type')?.includes('text/html');

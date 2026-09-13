@@ -51,3 +51,5 @@ Book metadata and covers are retrieved from Open Library. See the in-app privacy
 ## Product direction
 
 Future improvements can focus on recommendation quality, richer reading states, better discovery controls, stronger explanations, shareable recommendation sessions, accessibility, performance and optional premium capabilities — while keeping the free core simple and privacy-first.
+
+<!-- deployment trigger: 2026-09-13 -->

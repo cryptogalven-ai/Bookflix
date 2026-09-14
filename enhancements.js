@@ -3,8 +3,9 @@
   const APP='bookflix_v4';
   const qs=s=>document.querySelector(s);
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  // Route Open Library search through our same-origin Vercel function. This avoids
-  // device/browser CORS and service-worker edge cases while keeping native fetch.
+  // Emergency runtime recovery is loaded separately so a syntax error in the legacy
+  // inline app cannot leave the interface completely inert.
+  if(!document.querySelector('script[data-bf-recovery]')){const s=document.createElement('script');s.src='/recovery.js';s.async=false;s.dataset.bfRecovery='1';document.head.appendChild(s)}
   if(!window.__bfProxyFetch){
     const nativeFetch=window.fetch.bind(window);
     window.fetch=async function(input,init){

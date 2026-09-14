@@ -1,5 +1,5 @@
-const CACHE='bookflix-shell-v15';
-const SHELL=['/','/index.html','/manifest.json','/icon.svg','/enhancements.js','/learning.js','/product.js','/intelligence.js','/growth.js','/quality.js','/premium.js'];
+const CACHE='bookflix-shell-v16';
+const SHELL=['/','/index.html','/manifest.json','/icon.svg','/enhancements.js','/recovery.js','/learning.js','/product.js','/intelligence.js','/growth.js','/quality.js','/premium.js'];
 const isOpenLibrary=u=>u.hostname==='openlibrary.org'||u.hostname==='covers.openlibrary.org';
 const isPage=r=>r&&r.ok&&r.headers.get('content-type')?.includes('text/html');
 const isApi=u=>u.pathname.startsWith('/api/');
@@ -7,13 +7,11 @@ async function enhancedResponse(response){
   if(!isPage(response))return response;
   try{
     const text=await response.text();
-    const names=['enhancements','learning','product','intelligence','growth','quality','premium'];
+    const names=['recovery','enhancements','learning','product','intelligence','growth','quality','premium'];
     const scripts=names.map(n=>text.includes('/'+n+'.js')?'':'<script src="/'+n+'.js"></script>').join('');
     if(!scripts)return response;
     const injected=text.replace('</body>',`${scripts}</body>`);
     const headers=new Headers(response.headers);
-    // response.text() is already decoded; keeping compression headers makes the
-    // browser try to decode the body a second time and can break all page JS.
     headers.delete('content-length');
     headers.delete('content-encoding');
     headers.delete('transfer-encoding');
